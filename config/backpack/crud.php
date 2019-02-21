@@ -7,7 +7,7 @@ return [
     | Backpack\CRUD preferences
     |--------------------------------------------------------------------------
     */
-
+    'persistent_table' => true,
     /*
     |------------
     | CREATE

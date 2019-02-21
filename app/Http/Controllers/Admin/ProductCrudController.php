@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductCrudController extends CrudController
 {
-
     public function setUp()
     {
         /*
@@ -34,7 +33,8 @@ class ProductCrudController extends CrudController
         |--------------------------------------------------------------------------
         | See setPermissions method
         */
-
+        $this->crud->enableExportButtons();
+        $this->crud->with('revisionHistory');
         /*
         |--------------------------------------------------------------------------
         | COLUMNS
@@ -46,13 +46,22 @@ class ProductCrudController extends CrudController
             'label' => trans('product.name'),
             ],
             [
-            'type'      => "select_multiple",
-            'label'     => trans('category.categories'),
-            'name'      => 'categories',
-            'entity'    => 'categories',
-            'attribute' => "name",
-            'model'     => "App\Models\Category",
+                'type'      => "select_multiple",
+                'label'     => trans('category.categories'),
+                'name'      => 'categories',
+                'entity'    => 'categories',
+                'attribute' => "name",
+                'model'     => "App\Models\Category",
             ],
+            // [
+            //     // 1-n relationship
+            //    'label' => "Brand", // Table column heading
+            //    'type' => "select",
+            //    'name' => 'brand_id', // the column that contains the ID of that connected entity;
+            //    'entity' => 'brand', // the method that defines the relationship in your Model
+            //    'attribute' => "name", // foreign key attribute that is shown to user
+            //    'model' => "App\Models\Brand", // foreign key model
+            // ],
             [
             'name'  => 'sku',
             'label' => trans('product.sku'),
@@ -97,15 +106,61 @@ class ProductCrudController extends CrudController
         */
         $this->crud->enableAjaxTable();
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | FILTER
+        |--------------------------------------------------------------------------
+        */
+        $this->setFilter();
+
+
+    }
+
+    public function setFilter(){
+        $this->crud->addFilter([
+          'type' => 'text',
+          'name' => 'name',
+          'label'=> 'Name'
+        ],
+        false,
+        function($value) {
+            $this->crud->addClause('where', 'name', '%{$value}%'); 
+        });
+
+        $this->crud->addFilter([
+          'type' => 'dropdown',
+          'name' => 'status',
+          'label'=> 'Status'
+        ],
+        [
+            1 => 'Active',
+            0 => 'Inactive',
+        ],
+        function($value) {
+            $this->crud->addClause('where', 'active', $value); 
+        });
+
+        $this->crud->addFilter([
+          'type' => 'dropdown',
+          'name' => 'brand_id',
+          'label'=> 'Brand'
+        ],
+        \App\Models\Brand::pluck('name', 'id')->toArray()
+        ,
+        function($value) {
+            $this->crud->addClause('where', 'brand_id', $value); 
+        });
     }
 
     public function setPermissions()
     {
         // Get authenticated user
-        $user = auth()->user();
+        $user = backpack_user();
 
         // Deny all accesses
         $this->crud->denyAccess(['list', 'create', 'update', 'delete']);
+        $this->crud->allowAccess('revisions');
 
         // Allow list access
         if ($user->can('list_products')) {

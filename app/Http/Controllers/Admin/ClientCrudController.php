@@ -26,6 +26,10 @@ class ClientCrudController extends CrudController
             $query->whereName($clientRoleName ?: 'client');
         });
 
+        $this->crud->allowAccess('revisions');
+
+        $this->crud->with('revisionHistory');
+
         /*
         |--------------------------------------------------------------------------
         | COLUMNS
@@ -52,6 +56,24 @@ class ClientCrudController extends CrudController
             [
                 'name'  => 'email',
                 'label' => trans('client.email'),
+            ],
+            [
+                // 1-n relationship
+               'label' => "Type", // Table column heading
+               'type' => "select",
+               'name' => 'type_id', // the column that contains the ID of that connected entity;
+               'entity' => 'type', // the method that defines the relationship in your Model
+               'attribute' => "name", // foreign key attribute that is shown to user
+               'model' => "App\User", // foreign key model
+            ],
+            [
+                // 1-n relationship
+               'label' => "Area", // Table column heading
+               'type' => "select",
+               'name' => 'area_id', // the column that contains the ID of that connected entity;
+               'entity' => 'area', // the method that defines the relationship in your Model
+               'attribute' => "name", // foreign key attribute that is shown to user
+               'model' => "App\User", // foreign key model
             ],
             [
                 'name'      => 'active',
@@ -148,37 +170,57 @@ class ClientCrudController extends CrudController
 
                 'tab'   => trans('client.tab_general'),
             ],
-            [
-            // two interconnected entities
-            'label'             => trans('permissionmanager.user_role_permission'),
-            'field_unique_name' => 'user_role_permission',
-            'type'              => 'checklist_dependency',
-            'name'              => 'roles_and_permissions',
-            'subfields'         => [
-                    'primary' => [
-                        'label'            => trans('permissionmanager.roles'),
-                        'name'             => 'roles',
-                        'entity'           => 'roles',
-                        'entity_secondary' => 'permissions',
-                        'attribute'        => 'name',
-                        'model'            => config('laravel-permission.models.role'),
-                        'pivot'            => true,
-                        'number_columns'   => 3, //can be 1,2,3,4,6
-                    ],
-                    'secondary' => [
-                        'label'          => ucfirst(trans('permissionmanager.permission_singular')),
-                        'name'           => 'permissions',
-                        'entity'         => 'permissions',
-                        'entity_primary' => 'roles',
-                        'attribute'      => 'name',
-                        'model'          => "Backpack\PermissionManager\app\Models\Permission",
-                        'pivot'          => true,
-                        'number_columns' => 3, //can be 1,2,3,4,6
-                    ],
-                ],
+            [  // Select2
+               'label' => "Type",
+               'type' => 'select2',
+               'name' => 'type_id', // the db column for the foreign key
+               'entity' => 'type', // the method that defines the relationship in your Model
+               'attribute' => 'name', // foreign key attribute that is shown to user
+               'model' => "App\Models\UserType", // foreign key model
 
-                'tab'   => trans('client.tab_permissions'),
+               'tab'   => trans('client.tab_general'),
             ],
+            [  // Select2
+               'label' => "Area",
+               'type' => 'select2_nested',
+               'name' => 'area_id', // the db column for the foreign key
+               'entity' => 'area', // the method that defines the relationship in your Model
+               'attribute' => 'name', // foreign key attribute that is shown to user
+               'model' => "App\Models\ClientArea", // foreign key model
+
+               'tab'   => trans('client.tab_general'),
+            ],
+            // [
+            // // two interconnected entities
+            // 'label'             => trans('permissionmanager.user_role_permission'),
+            // 'field_unique_name' => 'user_role_permission',
+            // 'type'              => 'checklist_dependency',
+            // 'name'              => 'roles_and_permissions',
+            // 'subfields'         => [
+            //         'primary' => [
+            //             'label'            => trans('permissionmanager.roles'),
+            //             'name'             => 'roles',
+            //             'entity'           => 'roles',
+            //             'entity_secondary' => 'permissions',
+            //             'attribute'        => 'name',
+            //             'model'            => config('laravel-permission.models.role'),
+            //             'pivot'            => true,
+            //             'number_columns'   => 3, //can be 1,2,3,4,6
+            //         ],
+            //         'secondary' => [
+            //             'label'          => ucfirst(trans('permissionmanager.permission_singular')),
+            //             'name'           => 'permissions',
+            //             'entity'         => 'permissions',
+            //             'entity_primary' => 'roles',
+            //             'attribute'      => 'name',
+            //             'model'          => "Backpack\PermissionManager\app\Models\Permission",
+            //             'pivot'          => true,
+            //             'number_columns' => 3, //can be 1,2,3,4,6
+            //         ],
+            //     ],
+
+            //     'tab'   => trans('client.tab_permissions'),
+            // ],
         ]);
 
         $this->crud->addField([

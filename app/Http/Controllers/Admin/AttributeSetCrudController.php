@@ -61,7 +61,7 @@ class AttributeSetCrudController extends CrudController
     public function setPermissions()
     {
         // Get authenticated user
-        $user = auth()->user();
+        $user = backpack_user();
 
         // Deny all accesses
         $this->crud->denyAccess(['list', 'create', 'update', 'delete']);

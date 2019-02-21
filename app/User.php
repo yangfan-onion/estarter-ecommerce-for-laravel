@@ -11,6 +11,7 @@ use Backpack\Base\app\Notifications\ResetPasswordNotification as ResetPasswordNo
 class User extends Authenticatable
 {
     use Notifiable, HasRoles, CrudTrait;
+    use \Venturecraft\Revisionable\RevisionableTrait;
 
     /*
     |--------------------------------------------------------------------------
@@ -99,6 +100,16 @@ class User extends Authenticatable
     public function cartRules()
     {
         return $this->belongsToMany('App\Models\CartRule');
+    }
+
+    public function type()
+    {
+        return $this->belongsTo('App\Models\UserType');
+    }
+
+    public function area()
+    {
+        return $this->belongsTo('App\Models\UserArea');
     }
 
 

@@ -25,7 +25,31 @@
 	</div>
 
 	<div class="row">
-		<div class="col-md-7">
+		<div class="col-md-4">
+			<div class="box">
+			    <div class="box-header with-border">
+			      <h3 class="box-title">
+		            <span><i class="fa fa-user"></i> {{ trans('client.client') }}</span>
+		          </h3>
+			    </div>
+
+			    <div class="box-body">
+			    	<h3>{{ trans('user.tab_general') }}</h3>
+					<div class="col-md-12 well">
+						<div class="col-md-6">
+							<i class="fa fa-user-circle-o"></i> {{ $order->user->name }} <br/>
+							<i class="fa fa-envelope"></i> <a href="mailto:{{ $order->user->email }}">{{ $order->user->email }}</a> <br/>
+						</div>
+						<div class="col-md-6">
+							<i class="fa fa-birthday-cake"></i> {{ $order->user->birthday ? $order->user->birthday.' ('.$order->user->age().' '.strtolower(trans('common.years')).')': '-' }}
+							<br>
+							{!! ($order->user->gender == 1) ? '<i class="fa fa-mars"></i> '.trans('user.male') : '<i class="fa fa-venus"></i> '.trans('user.female') !!}
+						</div>
+					</div>
+			    </div>
+		    </div>
+		</div>
+		<div class="col-md-4">
 			<div class="box">
 			    <div class="box-header with-border">
 			      <h3 class="box-title">
@@ -91,46 +115,23 @@
 			    </div>
 		    </div>
 		</div>
-		<div class="col-md-5">
+		<div class="col-md-4">
 			<div class="box">
 			    <div class="box-header with-border">
 			      <h3 class="box-title">
-		            <span><i class="fa fa-user"></i> {{ trans('client.client') }}</span>
-		          </h3>
-			    </div>
-
-			    <div class="box-body">
-			    	<h3>{{ trans('user.tab_general') }}</h3>
-					<div class="col-md-12 well">
-						<div class="col-md-6">
-							<i class="fa fa-user-circle-o"></i> {{ $order->user->name }} <br/>
-							<i class="fa fa-envelope"></i> <a href="mailto:{{ $order->user->email }}">{{ $order->user->email }}</a> <br/>
-						</div>
-						<div class="col-md-6">
-							<i class="fa fa-birthday-cake"></i> {{ $order->user->birthday ? $order->user->birthday.' ('.$order->user->age().' '.strtolower(trans('common.years')).')': '-' }}
-							<br>
-							{!! ($order->user->gender == 1) ? '<i class="fa fa-mars"></i> '.trans('user.male') : '<i class="fa fa-venus"></i> '.trans('user.female') !!}
-						</div>
-					</div>
-			    </div>
-		    </div>
-
-		    <div class="box">
-			    <div class="box-header with-border">
-			      <h3 class="box-title">
-		            <span><i class="fa fa-user"></i> {{ trans('order.shipping_details') }}</span>
-		          </h3>
+			        <span><i class="fa fa-user"></i> {{ trans('order.shipping_details') }}</span>
+			      </h3>
 			    </div>
 
 			    <div class="box-body">
 			    	<div class="nav-tabs-custom">
-                        <ul class="nav nav-tabs">
-                            <li class="active"><a href="#tab-shipping-address" data-toggle="tab">{{ trans('order.shipping_address') }}</a></li>
-                            <li><a href="#tab-billing-info" data-toggle="tab">{{ trans('order.billing_info') }}</a></li>
-                        </ul>
-                        @if ($order->shippingAddress)
-	                        <div class="tab-content">
-	                            <div class="tab-pane active" id="tab-shipping-address">
+			            <ul class="nav nav-tabs">
+			                <li class="active"><a href="#tab-shipping-address" data-toggle="tab">{{ trans('order.shipping_address') }}</a></li>
+			                <li><a href="#tab-billing-info" data-toggle="tab">{{ trans('order.billing_info') }}</a></li>
+			            </ul>
+			            @if ($order->shippingAddress)
+			                <div class="tab-content">
+			                    <div class="tab-pane active" id="tab-shipping-address">
 									<h4>{{ trans('order.shipping_address') }}</h4>
 									<table class="table table-condensed table-hover">
 										<tr>
@@ -169,8 +170,8 @@
 											<td>{{ $order->shippingAddress->comment }}</td>
 										</tr>
 									</table>
-	                            </div>
-	                            <div class="tab-pane" id="tab-billing-info">
+			                    </div>
+			                    <div class="tab-pane" id="tab-billing-info">
 									@if ($order->billingCompanyInfo)
 										<h4>{{ trans('order.billing_company_details') }}</h4>
 										<table class="table table-condensed table-hover">
@@ -244,47 +245,14 @@
 											</tr>
 										</table>
 									@endif
-	                            </div>
-	                        </div>
-                        @endif
-                    </div>
+			                    </div>
+			                </div>
+			            @endif
+			        </div>
 			    </div>
-		    </div>
+			</div>
 		</div>
 	</div>
-
-	<div class="row">
-		<div class="col-md-12">
-			<div class="box">
-			    <div class="box-header with-border">
-			      <h3 class="box-title">
-		            <span><i class="fa fa-truck"></i> {{ trans('carrier.carrier') }}</span>
-		          </h3>
-			    </div>
-
-			    <div class="box-body">
-					<table class="table table-condensed">
-						<thead>
-							<tr>
-								<th style="width: 150px;">{{ trans('carrier.logo') }}</th>
-								<th>{{ trans('carrier.carrier') }}</th>
-								<th>{{ trans('carrier.price') }}</th>
-								<th>{{ trans('carrier.delivery_text') }}</th>
-							</tr>
-						</thead>
-						<tr>
-							<td class="vertical-align-middle">
-								<img src="{{ Storage::disk('carriers')->exists($order->carrier->logo) ? (url(config('filesystems.disks.carriers.simple_path')).'/'.$order->carrier->logo) : (url(config('filesystems.disks.carriers.simple_path')).'/default.png') }}" alt="" style="width: 100px;">
-							</td>
-							<td class="vertical-align-middle">{{ $order->carrier->name }}</td>
-							<td class="vertical-align-middle">{{ $order->carrier->price.' '.$order->currency->name }}</td>
-							<td class="vertical-align-middle">{{ $order->carrier->delivery_text }}</td>
-						</tr>
-					</table>
-			    </div>
-		    </div>
-	    </div>
-    </div>
 
 	<div class="row">
 		<div class="col-md-12">
@@ -341,6 +309,39 @@
 		    </div>
 		</div>
 	</div>
+
+	<div class="row">
+		<div class="col-md-12">
+			<div class="box">
+			    <div class="box-header with-border">
+			      <h3 class="box-title">
+		            <span><i class="fa fa-truck"></i> {{ trans('carrier.carrier') }}</span>
+		          </h3>
+			    </div>
+
+			    <div class="box-body">
+					<table class="table table-condensed">
+						<thead>
+							<tr>
+								<th style="width: 150px;">{{ trans('carrier.logo') }}</th>
+								<th>{{ trans('carrier.carrier') }}</th>
+								<th>{{ trans('carrier.price') }}</th>
+								<th>{{ trans('carrier.delivery_text') }}</th>
+							</tr>
+						</thead>
+						<tr>
+							<td class="vertical-align-middle">
+								<img src="{{ Storage::disk('carriers')->exists($order->carrier->logo) ? (url(config('filesystems.disks.carriers.simple_path')).'/'.$order->carrier->logo) : (url(config('filesystems.disks.carriers.simple_path')).'/default.png') }}" alt="" style="width: 100px;">
+							</td>
+							<td class="vertical-align-middle">{{ $order->carrier->name }}</td>
+							<td class="vertical-align-middle">{{ $order->carrier->price.' '.$order->currency->name }}</td>
+							<td class="vertical-align-middle">{{ $order->carrier->delivery_text }}</td>
+						</tr>
+					</table>
+			    </div>
+		    </div>
+	    </div>
+    </div>
 @endsection
 
 

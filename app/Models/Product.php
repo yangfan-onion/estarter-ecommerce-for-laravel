@@ -8,6 +8,7 @@ use Backpack\CRUD\CrudTrait;
 class Product extends Model
 {
     use CrudTrait;
+    use \Venturecraft\Revisionable\RevisionableTrait;
 
     /*
 	|--------------------------------------------------------------------------
@@ -22,6 +23,7 @@ class Product extends Model
     protected $fillable = [
     	'group_id',
     	'attribute_set_id',
+        'brand_id',
     	'name',
     	'description',
     	'price',
@@ -80,6 +82,11 @@ class Product extends Model
 		return $this->belongsToMany('App\Models\Category');
 	}
 
+    public function brand()
+    {
+        return $this->belongsTo('App\Models\Brand');
+    }
+
 	public function attributes()
 	{
 		return $this->belongsToMany('App\Models\Attribute', 'attribute_product_value', 'product_id', 'attribute_id')->withPivot('value');
@@ -87,7 +94,7 @@ class Product extends Model
 
 	public function tax()
 	{
-		return $this->hasOne('App\Models\Tax');
+		return $this->belongsTo('App\Models\Tax');
 	}
 
 	public function images()
